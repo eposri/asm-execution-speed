@@ -42,44 +42,33 @@
 ;  Tools: NASM
 ;
 ;Current File Information
-;  Name: manager.asm
+;  Name: cvtt2n.asm
 ;  Language: x86 with Intel syntax.
 ;  Max page width: 130 columns
-;  Assemble: nasm -f elf64 -l manager.lis -o manager.o manager.asm
+;  Assemble: nasm -f elf64 -l cvtt2n.lis -o cvtt2n.o cvtt2n.asm
 ;
 ;================================================================================================================================
 
 
 ;Declarations
-global    manager
-extern    printf, scanf
-extern    atof
-extern    read_clock
+global    cvtt2n
 
 
 
 segment    .data
 ;Declare arrays initialized
-  present_time    db 10, "The present time on the clock is %llu tics.", 10, 0
-  enter_prompt    db 10, "Enter the float numbers positive or negative separated by ws. Terminate with ctrl+d:", 10, 0
-  print_sum    db 10, "The sum of these numbers is %lf.", 10, 0
-  float_format    db "%lf", 0
-  debug    db "debug: %lf", 10, 0
+
 
 
 
 segment    .bss
 ;Declare arrays with no data initially
-  align    64
-  backup_strg    resb 800
-  input_buffer    resb 256
-  float_arr    resq 256
 
 
 
 
 segment    .text
-manager:
+cvtt2n:
   ;Back-up GPRs
   push    rbp
   mov    rbp, rsp
@@ -98,71 +87,6 @@ manager:
   push    r15
   pushf
 
-  mov    rax, 0
-  call    read_clock
-  mov    r12, rax
-
-  mov    rax, 0
-  mov    rdi, present_time
-  mov    rsi, r12
-  call    printf
-
-  mov    rax, 0
-  mov    rdi, enter_prompt
-  call    printf
-
-  mov    r13, float_arr
-  mov    r14, 0    ;index
-
-loop_start:
-  push    qword 0
-  push    qword 0
-
-  mov    rax, 0
-  mov    rdi, float_format
-  lea    rsi, [input_buffer]
-  call    scanf
-
-  cmp    eax, -1
-  je    ctrl_d
-
-  movsd    qword[r13+r14*8], xmm0
-  inc    r14
-
-  pop    rax
-  pop    rax
-  
-  jmp    loop_start
-
-ctrl_d:
-  pop    rax
-  pop    rax
-
-loop_end:
-
-mov    r15, 0
-xorpd    xmm12, xmm12
-
-sum:
-;Exit loop at the end of iteration (max size)
-cmp    r15, r14
-jge    end_sum
-
-addsd    xmm12, qword[r13+r15*8]
-
-inc    r15
-
-jmp    sum
-
-end_sum:
-mov rax, 1
-mov    rdi, print_sum
-movsd xmm0, xmm12
-call    printf
-
-
-
-
   ;Restore GPRs
   popf
   pop    r15
@@ -179,5 +103,3 @@ call    printf
   pop    rcx
   pop    rbx
   pop    rbp
-
-  ret

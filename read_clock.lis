@@ -1,0 +1,117 @@
+     1                                  ;****************************************************************************************************************************
+     2                                  ;Program Name: "Execution Speed".                                                                                           *
+     3                                  ;This program will utilize the x86-64 microprocessor clock to measure the average time required to perform one              *
+     4                                  ;floating point addition.                                                                                                   *
+     5                                  ;Copyright (C) 2025 Kayla Ngo                                                                                               *
+     6                                  ;                                                                                                                           *
+     7                                  ;This file is part of the software program "Execution Speed".                                                               *
+     8                                  ;"Execution Speed" is free software: you can redistribute it and/or modify it under the terms of the GNU General Public     *
+     9                                  ;License version 3 as published by the Free Software Foundation.                                                            *
+    10                                  ;"Execution Speed" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even                *
+    11                                  ;the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more  *
+    12                                  ;details.  A copy of the GNU General Public License v3 is available here:  <https://www.gnu.org/licenses/>.                 *
+    13                                  ;****************************************************************************************************************************
+    14                                  
+    15                                  ;================================================================================================================================
+    16                                  ;
+    17                                  ;Author Information
+    18                                  ;  Name: Kayla Ngo
+    19                                  ;  Email: kngo29@csu.fullerton.edu
+    20                                  ;  CWID: 885083436
+    21                                  ;  Course: CPSC 240-09
+    22                                  ;
+    23                                  ;Program Information
+    24                                  ;  Name: Execution Speed
+    25                                  ;  Programming Languages:: x86-64
+    26                                  ;  Effective Date: April 23, 2025
+    27                                  ;  Latest Update: April 23, 2025
+    28                                  ;  Date open source license added: April 23, 2025
+    29                                  ;  Files: manager.asm, read_clock.asm, cvtt2n.asm, clock.cpp, r.sh
+    30                                  ;  Status:
+    31                                  ;  References Consulted: Ed Jorgensen, "x86-64 Assembly Language Programming with Ubuntu"
+    32                                  ;  Future Upgrades:
+    33                                  ;
+    34                                  ;Purpose
+    35                                  ;  This program will utilize the x86-64 microprocessor clock to measure the average time required to perform one
+    36                                  ;  floating point addition. The unit of time for the clock of the CPU is "tic", and the speed of the processor
+    37                                  ;  is measured by the number of tics produced per second.
+    38                                  ;
+    39                                  ;Development Information
+    40                                  ;  OS: Ubuntu 24.04.2 LTS
+    41                                  ;  Text Editor: Visual Studio Code
+    42                                  ;  Tools: NASM
+    43                                  ;
+    44                                  ;Current File Information
+    45                                  ;  Name: read_clock.asm
+    46                                  ;  Language: x86 with Intel syntax.
+    47                                  ;  Max page width: 130 columns
+    48                                  ;  Assemble: nasm -f elf64 -l read_clock.lis -o read_clock.o read_clock.asm
+    49                                  ;
+    50                                  ;================================================================================================================================
+    51                                  
+    52                                  
+    53                                  ;Declarations
+    54                                  global    read_clock
+    55                                  
+    56                                  
+    57                                  
+    58                                  segment    .data
+    59                                  ;Declare arrays initialized
+    60                                  ;Empty
+    61                                  
+    62                                  
+    63                                  
+    64                                  
+    65                                  segment    .bss
+    66                                  ;Declare arrays with no data initially
+    67                                  ;Empty
+    68                                  
+    69                                  
+    70                                  
+    71                                  
+    72                                  segment    .text
+    73                                  read_clock:
+    74                                    ;Back-up GPRs
+    75 00000000 55                        push    rbp
+    76 00000001 4889E5                    mov    rbp, rsp
+    77 00000004 53                        push    rbx
+    78 00000005 51                        push    rcx
+    79 00000006 52                        push    rdx
+    80 00000007 56                        push    rsi
+    81 00000008 57                        push    rdi
+    82 00000009 4150                      push    r8
+    83 0000000B 4151                      push    r9
+    84 0000000D 4152                      push    r10
+    85 0000000F 4153                      push    r11
+    86 00000011 4154                      push    r12
+    87 00000013 4155                      push    r13
+    88 00000015 4156                      push    r14
+    89 00000017 4157                      push    r15
+    90 00000019 9C                        pushf
+    91                                  
+    92 0000001A 4831C0                    xor    rax, rax
+    93 0000001D 4831D2                    xor    rdx, rdx
+    94 00000020 0FA2                      cpuid
+    95 00000022 0F31                      rdtsc
+    96 00000024 48C1E220                  shl    rdx, 32
+    97 00000028 4801C2                    add    rdx,rax    ;Current time in rdx
+    98 0000002B 4889D0                    mov    rax, rdx
+    99                                  
+   100                                    ;Restore GPRs
+   101 0000002E 9D                        popf
+   102 0000002F 415F                      pop    r15
+   103 00000031 415E                      pop    r14
+   104 00000033 415D                      pop    r13
+   105 00000035 415C                      pop    r12
+   106 00000037 415B                      pop    r11
+   107 00000039 415A                      pop    r10
+   108 0000003B 4159                      pop    r9
+   109 0000003D 4158                      pop    r8
+   110 0000003F 5E                        pop    rsi
+   111 00000040 5F                        pop    rdi
+   112 00000041 5A                        pop    rdx
+   113 00000042 59                        pop    rcx
+   114 00000043 5B                        pop    rbx
+   115 00000044 5D                        pop    rbp
+   116                                  
+   117 00000045 C3                        ret
